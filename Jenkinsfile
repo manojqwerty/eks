@@ -9,7 +9,7 @@ pipeline {
        echo 'manoj'
        }
       }
-      stage('Build') {
+      stage('test') {
        steps {
        bat 'mvn clean'
        }
