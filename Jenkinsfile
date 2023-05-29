@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     withVault([
-                        vaultCredential: 'vault-cred',
+                        credential: 'vault-cred',
                     ]) {
                         def credentials = vault.read('secret/dockerhub')
                         env.DOCKER_USERNAME = credentials.data.username
