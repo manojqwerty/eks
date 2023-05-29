@@ -1,21 +1,26 @@
 pipeline {
     agent any
-    
-    environment {
-        VAULT_ADDR = "http://54.242.124.50:8200/"
-        VAULT_TOKEN = credentials('vault-cred')
-    }
-    
+
     stages {
-        stage('Fetch Docker Credentials') {
+        stage('Docker Login') {
             steps {
                 script {
-                    // Retrieve Docker credentials from Vault using the vault command-line tool
-                    sh 'vault kv get -format=json secret/dockerhub'
+                    def vaultUrl = "http://54.242.124.50:8200/" // Replace with your Vault URL
+                    def secretPath = "secret/dockerhub" // Replace with your secret path in Vault
+                    def vaultToken= "mysecret"
+                    // Retrieve Docker Hub credentials from Vault
+                    def credentials = sh(
+                        returnStdout: true,
+                        script: "curl -s -H 'X-Vault-Token: ${vaultToken}' ${vaultUrl}/v1/${secretPath}"
+                    ).trim()
                     
-                
+                    def dockerHubUsername = credentials.data.username
+                    def dockerHubPassword = credentials.data.password
+
+                    
                 }
             }
         }
+        
     }
-}       
+}
