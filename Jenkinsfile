@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     // Retrieve Docker credentials from Vault using the vault command-line tool
-                    vault kv get -format=json secret/dockerhub'
+                    sh 'vault kv get -format=json secret/dockerhub'
                     
                 
                 }
