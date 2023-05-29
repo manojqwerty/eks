@@ -1,27 +1,30 @@
 pipeline {
     agent any
-    
+
     stages {
-        stage('Docker Login') {
+        stage('Retrieve Docker Credentials') {
             steps {
                 script {
-                    // Set up Docker credentials
-                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                        
-                        // Docker login
-                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                        
-                        // You can also specify the Docker registry URL if necessary
-                        // sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                    // Install and configure the Vault plugin
+                    def vaultPlugin = Jenkins.instance.getPlugin('hashicorp-vault-plugin')
+                    if (!vaultPlugin) {
+                        error("Vault plugin not installed. Please install the 'HashiCorp Vault Plugin' from the Jenkins Plugin Manager.")
+                    }
+
+                    // Read Docker credentials from Vault
+                    withVault([vaultCredential: 'my-vault-credential']) {
+                        def credentials = vaultRead path: 'secret/dockerhub', format: 'json'
+                        def dockerUsername = credentials.data.username
+                        def dockerPassword = credentials.data.password
+
+                        // Set Docker credentials in the environment
+                        withCredentials([usernamePassword(credentialsId: 'vault-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                                # Use Docker credentials
+                               sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                        }
                     }
                 }
             }
         }
-        
-        // Add additional stages as needed
-        // ...
     }
-    
-    // Post-build actions, if any
-    // ...
 }
