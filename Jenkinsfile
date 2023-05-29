@@ -7,7 +7,7 @@ pipeline {
         stage('get code from scm') {
             steps {
                 script {
-                    sh 'git -version'
+                    sh 'git --version'
                     sh 'mvn --version'
                 }
             }
