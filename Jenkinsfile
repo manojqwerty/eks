@@ -65,5 +65,13 @@ pipeline {
                 }
             }
         }
+        stage('remove tomcat user.xml') {
+            steps {
+                script {
+                    def containerId = sh(returnStdout: true, script: 'docker ps -aqf "name=sample"').trim()
+                    sh 'docker exec -it $containerId /bin/bash'
+                }
+            }
+        }
     }
 }
