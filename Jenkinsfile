@@ -49,5 +49,12 @@ pipeline {
                 }
             }
         } 
+        stage('Running the application') {
+            steps {
+                script {
+                    sh 'docker run -itd -p 8080:8080 manojreddy12/demo:v1.0'
+                }
+            }
+        }
     }
 }
