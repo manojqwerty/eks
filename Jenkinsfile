@@ -69,7 +69,8 @@ pipeline {
             steps {
                 script {
                     def containerId = sh(returnStdout: true, script: 'docker ps -aqf "name=sample"').trim()
-                    sh 'docker exec -it $containerId /bin/bash'
+                    sh 'docker exec -it sample /bin/bash'
+                    sh 'rm -rf conf/tomcat-users.xml'
                 }
             }
         }
