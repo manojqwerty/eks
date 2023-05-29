@@ -6,11 +6,9 @@ pipeline {
         stage('Read DockerHub credentials from Vault') {
             steps {
                 script {
-                    withVault([VaultConfiguration: 'vault-cred']) {
-                        def credentials = vault('secret/dockerhub')
-                        env.DOCKER_USERNAME = credentials.username
-                        env.DOCKER_PASSWORD = credentials.password
-                    }
+                    withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-cred', vaultUrl: 'http://54.242.124.50:8200'], vaultSecrets: [[path: 'secret/dockerhub', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]]) {
+              sh 'docker login -u $username -p $password'
+}
                 }
             }
         
