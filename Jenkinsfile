@@ -8,6 +8,12 @@ pipeline {
             steps {
                 script {
                     sh 'git --version'
+                }
+            }
+        }
+        stage('mvn build') {
+            steps {
+                script{
                     sh 'mvn --version'
                 }
             }
@@ -17,10 +23,17 @@ pipeline {
                 script {
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-cred', vaultUrl: 'http://54.242.124.50:8200'], vaultSecrets: [[path: 'secret/dockerhub', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]]) {
               sh 'docker login -u $username -p $password'
-}
+             }
                 }
             }
         
+        }
+        stage('docker build') {
+          steps {
+            script{
+                sh 'docker build -t manu .'
+            }
+          }
         }
     }
 }
