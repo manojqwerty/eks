@@ -10,14 +10,17 @@ pipeline {
         stage('Fetch Docker Credentials') {
             steps {
                 script {
-                    def vaultCredentials = vaultCredentials(credentialsId: 'vault-cred', path: 'secret/dockerhub')
+                    // Retrieve Docker credentials from Vault using the vault command-line tool
+                    def vaultOutput = sh(script: 'vault kv get -format=json secret/dockerhub', returnStdout: true).trim()
+                    def dockerCredentials = readJSON text: vaultOutput
                     
-                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: vault-cred, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-                        // Use Docker credentials here
-                        // For example, you can authenticate with Docker registry or build and push Docker images
-                        sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                        // Other Docker-related commands
-                    }
+                    def DOCKER_USERNAME = dockerCredentials.data.username
+                    def DOCKER_PASSWORD = dockerCredentials.data.password
+                    
+                    // Use Docker credentials here
+                    // For example, you can authenticate with Docker registry or build and push Docker images
+                    sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                    // Other Docker-related commands
                 }
             }
         }
