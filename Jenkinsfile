@@ -38,14 +38,14 @@ pipeline {
         stage('docker tag') {
             steps {
                 script {
-                    sh 'docker tag manu manojreddy12/demo:v1,0'
+                    sh 'docker tag manu manojreddy12/demo:v1.0'
                 }
             }
         }
        stage('docker push') {
             steps {
                 script {
-                    sh 'docker push manojreddy12/demo:v1,0'
+                    sh 'docker push manojreddy12/demo:v1.0'
                 }
             }
         } 
