@@ -1,30 +1,20 @@
-pipeline {
-    agent any
+stage('Retrieve Docker Credentials from Vault') {
+  steps {
+    script {
+      def vaultSecret = vault(
+        path: 'secret/dockerhub',  // Path to the Docker credentials in the Vault
+        engineVersion: 1
+      )
 
-    stages {
-        stage('Retrieve Docker Credentials') {
-            steps {
-                script {
-                    // Install and configure the Vault plugin
-                    def vaultPlugin = Jenkins.instance.getPlugin('hashicorp-vault-plugin')
-                    if (!vaultPlugin) {
-                        error("Vault plugin not installed. Please install the 'HashiCorp Vault Plugin' from the Jenkins Plugin Manager.")
-                    }
-
-                    // Read Docker credentials from Vault
-                    withVault([vaultCredential: 'my-vault-credential']) {
-                        def credentials = vaultRead path: 'secret/dockerhub', format: 'json'
-                        def dockerUsername = credentials.data.username
-                        def dockerPassword = credentials.data.password
-
-                        // Set Docker credentials in the environment
-                        withCredentials([usernamePassword(credentialsId: 'vault-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                                # Use Docker credentials
-                               sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                        }
-                    }
-                }
-            }
-        }
+      withCredentials([
+        usernamePassword(
+          credentialsId: vault-cred.data.usernameKey,  // The key for the Docker username in the Vault secret
+          passwordVariable: 'DOCKER_PASSWORD',  // Environment variable to store the Docker password
+          usernameVariable: 'DOCKER_USERNAME'  // Environment variable to store the Docker username
+        )
+      ]) {
+        // Your Docker-related steps here, where you can use the DOCKER_USERNAME and DOCKER_PASSWORD environment variables
+      }
     }
+  }
 }
