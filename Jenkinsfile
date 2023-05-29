@@ -52,7 +52,16 @@ pipeline {
         stage('Running the application') {
             steps {
                 script {
-                    sh 'docker run -itd -p 8080:8080 manojreddy12/demo:v1.0'
+                    sh 'docker run -itd --name sample -p 8080:8080 manojreddy12/demo:v1.0'
+                }
+            }
+        }
+        stage('Print Container ID') {
+            steps {
+                // Print the container ID
+                script {
+                    def containerId = sh(returnStdout: true, script: 'docker ps -aqf "name=sample"').trim()
+                    echo "Container ID: ${containerId}"
                 }
             }
         }
