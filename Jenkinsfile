@@ -1,7 +1,7 @@
 stage('Retrieve Docker Credentials from Vault') {
   steps {
     script {
-      def vaultSecret = vault(
+      def vault-cred = vault(
         path: 'secret/dockerhub',  // Path to the Docker credentials in the Vault
         engineVersion: 1
       )
