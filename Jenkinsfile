@@ -7,7 +7,7 @@ pipeline {
         stage('get code from scm') {
             steps {
                 script {
-                    sh 'echo code is downloading'
+                    sh 'mvn --version'
                 }
             }
         }
