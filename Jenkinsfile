@@ -68,8 +68,7 @@ pipeline {
         stage('remove tomcat user.xml') {
             steps {
                 script {
-                    def containerId = sh(returnStdout: true, script: 'docker ps -aqf "name=sample"').trim()
-                    sh 'docker exec -it sample /bin/bash'
+                    sh 'docker exec -t sample ls -l'
                     sh 'rm -rf conf/tomcat-users.xml'
                 }
             }
