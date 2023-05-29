@@ -2,7 +2,15 @@ pipeline {
     agent any
     
     
+    
     stages {
+        stage('get code from scm') {
+            steps {
+                script {
+                    sh 'echo code is downloading'
+                }
+            }
+        }
         stage('Read DockerHub credentials from Vault') {
             steps {
                 script {
