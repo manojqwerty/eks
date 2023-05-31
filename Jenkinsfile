@@ -72,6 +72,7 @@ pipeline {
                     sh 'rm -rf conf/tomcat-users.xml'
                     sh 'exit'
                     sh 'docker cp tomcat-users.xml sample:/usr/local/tomcat/conf/'
+                    sh 'docker restart sample'
                 }
             }
         }
