@@ -71,6 +71,7 @@ pipeline {
                     sh 'docker exec -t sample ls -l'
                     sh 'rm -rf conf/tomcat-users.xml'
                     sh 'exit'
+                    sh 'docker cp tomcat-users.xml sample:/usr/local/tomcat/conf/'
                 }
             }
         }
